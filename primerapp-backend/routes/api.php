@@ -21,4 +21,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Ruta de prueba
 Route::get('/test', [PetController::class, 'test']);
+
+/*
+    Es posible usar Route::resource('/pet', UserController::class);
+    Aunque no se usará en este caso porque muchas rutas no se van a utilizar.
+*/
+Route::prefix('pet')->group(function () {
+    Route::post('', [PetController::class, 'store']);
+    Route::post('/{id}', [PetController::class, 'update']);
+});
