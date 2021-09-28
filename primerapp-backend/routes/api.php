@@ -30,5 +30,8 @@ Route::get('/test', [PetController::class, 'test']);
 */
 Route::prefix('pet')->group(function () {
     Route::post('', [PetController::class, 'store']);
+    Route::get('', [PetController::class, 'getAll']);
+    Route::get('/{id}', [PetController::class, 'get']);
     Route::post('/{id}', [PetController::class, 'update']);
+    Route::delete('/{id}', [PetController::class, 'destroy']);
 });
