@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Pet extends Model {
     use HasFactory;
 
-    protected $fillable = ['breed', 'size'];
+    protected $fillable = [
+        'breed',
+        'size',
+        'type_pet_id'
+    ];
 
     // Validaciones para llenar los campos en la tabla
     private const VALIDATE = [
