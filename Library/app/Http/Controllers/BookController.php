@@ -87,6 +87,13 @@ class BookController extends Controller {
                     $book = $book->find($id);
 
                     if (!empty($book) && $book->update($requestData)) {
+                        // Detach all authors (Drop data in table pivot)
+						$book->authors()->detach();
+
+						// Attach authors (save in table pivot)
+                        if (isset($requestData['authors'])) {
+                            $book->authors()->attach($requestData['authors']);
+                        }
                         $status = 1;
                         $code = 201;
                         $title = 'Successful update!';
@@ -107,6 +114,11 @@ class BookController extends Controller {
                     $data = $book->create($requestData);
 
                     if (!empty($data)) {
+                        // Attach authors (save in table pivot)
+                        if (isset($requestData['authors'])) {
+                            $book->authors()->attach($requestData['authors']);
+                        }
+
                         $status = 1;
                         $code = 201;
                         $title = 'Successful store!';

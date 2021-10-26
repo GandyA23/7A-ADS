@@ -28,7 +28,9 @@ class Book extends Model
         'description' => 'nullable|string',
         'publication_date' => 'nullable|string',
         'editorial_id' => 'required|integer',
-        'category_id' => 'required|integer'
+        'category_id' => 'required|integer',
+        'authors' => 'nullable|array|min:1',
+        'authors.*' => 'nullable|integer|min:1'
     ];
 
     public function getValidations () {
