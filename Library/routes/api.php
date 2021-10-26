@@ -39,6 +39,7 @@ Route::prefix('editorial')->group(function () {
 
 Route::prefix('book')->group(function () {
     Route::get('', [BookController::class, 'index']);
+    Route::get('/by-pub-year', [BookController::class, 'getBooksByYear']);
     Route::get('/{id}', [BookController::class, 'show']);
     Route::post('/{id?}', [BookController::class, 'store']);
     Route::delete('/{id}', [BookController::class, 'destroy']);

@@ -13,7 +13,7 @@ class BookController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index () {
+    public function index (Request $request) {
         $code = 200;
         $status = 0;
         $title = 'Get all books';
@@ -21,7 +21,22 @@ class BookController extends Controller {
         $data = array();
 
         try {
-            $data = Book::all();
+            $requestData = $request->all();
+            if (!isset($requestData['isbn']) && !isset($requestData['title'])) {
+                $data = Book::all();
+            } else {
+                $query = new Book();
+
+                if (isset($requestData['isbn'])) {
+                    $query = $query->orWhere('isbn', 'like', '%' . $requestData['isbn'] . '%');
+                }
+
+                if (isset($requestData['title'])) {
+                    $query = $query->orWhere('title', 'like', '%' . $requestData['title'] . '%');
+                }
+
+                $data = $query->get();
+            }
 
             if (count($data)) {
                 $status = 1;
@@ -200,4 +215,48 @@ class BookController extends Controller {
             'message' => $message
         ), $code);
     }
+
+    /**
+     * Get specified books by year.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBooksByYear (Request $request) {
+        $code = 200;
+        $status = 0;
+        $title = 'Get specified books by year';
+        $message = 'No stored books with this year';
+        $data = array();
+
+        try {
+            $requestData = $request->all();
+
+            // Validate
+            $data = validate($requestData, ['publication_date' => 'required|string']);
+            $hasErrors = count($data);
+
+            if (!$hasErrors) {
+                $data = Book::whereYear('publication_date', $requestData['publication_date'])->orderBy('title', 'asc')->get();
+
+                if (count($data)) {
+                    $status = 1;
+                    $message = 'Successful get all specified books!';
+                }
+            }
+        } catch (\Exception $e) {
+            $code = 500;
+            $status = 0;
+            $title = 'Exception Error!';
+            $message = $e->getMessage();
+            $data = array();
+        }
+
+        return response()->json(array(
+            'status' => $status,
+            'title' => $title,
+            'message' => $message,
+            'data' => $data
+        ), $code);
+    }
+
 }
