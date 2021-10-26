@@ -13,7 +13,7 @@ class CreateAuthorsBooksTable extends Migration
      */
     public function up()
     {
-        Schema::create('authors_books', function (Blueprint $table) {
+        Schema::create('author_book', function (Blueprint $table) {
             $table->foreignId('author_id');
             $table->foreignId('book_id');
             $table->timestamps();
@@ -32,6 +32,6 @@ class CreateAuthorsBooksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('authors_books');
+        Schema::dropIfExists('author_book');
     }
 }

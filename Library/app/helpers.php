@@ -11,11 +11,36 @@ use Illuminate\Support\Facades\Validator;
  * @param  array  $customMessages
  * @return array
  */
-function validate ($data, $validation, $customMessages = []) {
+function validate ($data, $validations, $id = 0, $customMessages = []) {
     $messages = [];
 
+    // Add data in case to update in unique fields
+    if ($id > 0) {
+        foreach ($validations as $field => $validation) {
+            // Example of a validation:
+            //  'isbn' => 'required|string|max:15|unique:books,isbn'
+
+            $validationsArray =  gettype($validation) !== 'array' ? explode('|', $validation) : $validation;
+
+            // Iterate the array of validations looking for unique validation
+            if (isset($data[$field])) {
+                foreach ($validationsArray as $key => $condition) {
+                    if (str_contains($condition, 'unique')) {
+                        // If it contains "_id" then it is a foreign field, otherwise it is the same table
+                        $validationsArray[$key] = str_contains($field, '_id')
+                            ? str_replace($condition, $condition . ',' . $data[$field], $condition)
+                            : str_replace($condition, $condition . ',' . $id, $condition);
+                        break;
+                    }
+                }
+                $validations[$field] = $validationsArray;
+            }
+
+        }
+    }
+
     // Make the validator
-    $validator = Validator::make($data, $validation, $customMessages);
+    $validator = Validator::make($data, $validations, $customMessages);
 
     // Check the messages in case of any errors.
     $fields = $validator->messages()->toArray();

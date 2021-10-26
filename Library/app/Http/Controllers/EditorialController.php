@@ -5,27 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\Category;
+use App\Models\Editorial;
 
-class CategoryController extends Controller {
+class EditorialController extends Controller {
     /**
-     * Get all categories stored in database.
+     * Get all editorials stored in database.
      *
      * @return \Illuminate\Http\Response
      */
     public function index () {
         $code = 200;
         $status = 0;
-        $title = 'Get all categories';
-        $message = 'No stored categories';
+        $title = 'Get all editorials';
+        $message = 'No stored editorials';
         $data = array();
 
         try {
-            $data = Category::all();
+            $data = Editorial::all();
 
             if (count($data)) {
                 $status = 1;
-                $message = 'Succesful get all categories!';
+                $message = 'Successful get all editorials!';
             }
         } catch (\Exception $e) {
             $code = 500;
@@ -44,7 +44,7 @@ class CategoryController extends Controller {
     }
 
     /**
-     * Store or update a category in database.
+     * Store or update a editorial in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -57,47 +57,47 @@ class CategoryController extends Controller {
         try {
             DB::beginTransaction();
             $requestData = $request->all();
-            $category = new Category();
+            $editorial = new Editorial();
 
             // Validate
-            $data = validate($requestData, $category->getValidations(), $id);
+            $data = validate($requestData, $editorial->getValidations(), $id);
             $hasErrors = count($data);
 
             if (!empty($id)) {
                 // Update
                 $title = 'Failed to update!';
-                $message = 'Category was not updated';
+                $message = 'Editorial was not updated';
 
                 if (!$hasErrors) {
-                    $category = $category->find($id);
+                    $editorial = $editorial->find($id);
 
-                    if (!empty($category)) {
-                        if ($category->update($requestData)) {
+                    if (!empty($editorial)) {
+                        if ($editorial->update($requestData)) {
                             $status = 1;
                             $code = 201;
-                            $title = 'Succesful update!';
-                            $message = 'Category updated';
-                            $data = $category;
+                            $title = 'Successful update!';
+                            $message = 'Editorial updated';
+                            $data = $editorial;
                             DB::commit();
                         }
                     } else {
-                        $message = "No stored category with id $id";
+                        $message = "No stored editorial with id $id";
                     }
                 }
 
             } else {
                 // Store
                 $title = 'Failed to store!';
-                $message = 'Category was not stored';
+                $message = 'Editorial was not stored';
 
                 if (!$hasErrors) {
-                    $data = $category->create($requestData);
+                    $data = $editorial->create($requestData);
 
                     if (!empty($data)) {
                         $status = 1;
                         $code = 201;
-                        $title = 'Succesful store!';
-                        $message = 'Category stored';
+                        $title = 'Successful store!';
+                        $message = 'Editorial stored';
                         DB::commit();
                     }
                 }
@@ -120,7 +120,7 @@ class CategoryController extends Controller {
     }
 
     /**
-     * Display the specified category.
+     * Display the specified editorial.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -128,17 +128,17 @@ class CategoryController extends Controller {
     public function show ($id) {
         $code = 200;
         $status = 0;
-        $title = 'Get category';
-        $message = "No stored category with id $id";
+        $title = 'Get editorial';
+        $message = "No stored editorial with id $id";
         $data = array();
 
         try {
             if (!empty($id)) {
-                $data = Category::find($id);
+                $data = Editorial::find($id);
 
                 if (!empty($data)) {
                     $status = 1;
-                    $message = 'Succesful get category';
+                    $message = 'Successful get editorial';
                 } else {
                     $data = array();
                 }
@@ -168,17 +168,17 @@ class CategoryController extends Controller {
     public function destroy ($id) {
         $code = 200;
         $status = 0;
-        $title = 'Delete category';
-        $message = "No stored category with id $id";
+        $title = 'Delete editorial';
+        $message = "No stored editorial with id $id";
 
         try {
             DB::beginTransaction();
             if (!empty($id)) {
-                $category = Category::find($id);
+                $editorial = Editorial::find($id);
 
-                if (!empty($category) && $category->delete()) {
+                if (!empty($editorial) && $editorial->delete()) {
                     $status = 1;
-                    $message = 'Succesful destroy category';
+                    $message = 'Successful destroy editorial';
                     DB::commit();
                 }
             }
